@@ -1,0 +1,19 @@
+spring:
+  main:
+    allow-circular-references: true
+#log
+logging:
+  level:
+    root: info
+    com.github.tedtang054.union: info
+## 接入配置
+custom:
+  transport:
+    boss-count: 1
+    worker-count: 4
+    udp:
+      enable: true
+      protocols: FIRMWARE,CABINET,RFID_STATION
+    tcp:
+      enable: true
+      protocols: CABINET,RFID_STATION,FIRMWARE
