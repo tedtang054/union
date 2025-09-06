@@ -15,8 +15,6 @@
 
 4、在application.yml中配置开启的协议。
 
-5、可自行接入nacos。
-
 🚨 默认端口
 
 tcp:7788

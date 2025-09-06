@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: union
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yaml
+        group: tang
+        namespace: tang
+        context-path: /nacos
+      username: nacos
+      password: nacos
+  main:
+    allow-circular-references: true

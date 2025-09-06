@@ -6,8 +6,7 @@ import com.github.tedtang054.union.transport.TransportProperties;
 import com.github.tedtang054.union.transport.channel.CompositeDecodeHandler;
 import io.netty.channel.ChannelOption;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.SmartLifecycle;
 import reactor.netty.Connection;
 import reactor.netty.udp.UdpServer;
 
@@ -19,7 +18,7 @@ import java.time.Duration;
  * @Date: 2023/10/10 8:31
  */
 @Slf4j
-public class ReactorUdpServer implements ApplicationRunner {
+public class ReactorUdpServer implements SmartLifecycle {
 
     private TransportProperties properties;
 
@@ -30,6 +29,8 @@ public class ReactorUdpServer implements ApplicationRunner {
     private ClientSessionManager sessionManager;
 
     private CompositeDecodeHandler decoderHandler;
+
+    private volatile boolean running = false;
 
     public ReactorUdpServer(TransportProperties properties, UdpHandlerAdapter udpHandlerAdapter,
                             ClientSessionManager sessionManager, CompositeDecodeHandler decoderHandler) {
@@ -61,6 +62,7 @@ public class ReactorUdpServer implements ApplicationRunner {
         awaitThread.setDaemon(false);
         awaitThread.start();
         log.info("udpServer running ........ port : {}", udp.getPort());
+        running = true;
     }
 
     public void stop() {
@@ -71,9 +73,8 @@ public class ReactorUdpServer implements ApplicationRunner {
         log.info("udpServer stopped ........ port : {}", properties.getUdp().getPort());
     }
 
-
     @Override
-    public void run(ApplicationArguments args) throws Exception {
-        start();
+    public boolean isRunning() {
+        return running;
     }
 }

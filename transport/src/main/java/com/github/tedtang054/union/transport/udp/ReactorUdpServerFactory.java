@@ -3,19 +3,15 @@ package com.github.tedtang054.union.transport.udp;
 import com.github.tedtang054.union.transport.ClientSessionManager;
 import com.github.tedtang054.union.transport.TransportProperties;
 import com.github.tedtang054.union.transport.channel.CompositeDecodeHandler;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.FactoryBean;
 
 
 /**
  * @Author: dengJh
  * @Date: 2023/10/19 11:02
  */
-public class ReactorUdpServerFactory implements FactoryBean<ReactorUdpServer>, DisposableBean {
+public class ReactorUdpServerFactory {
 
     private TransportProperties properties;
-
-    private ReactorUdpServer udpServer;
 
     private UdpHandlerAdapter handlerAdapter;
 
@@ -31,18 +27,8 @@ public class ReactorUdpServerFactory implements FactoryBean<ReactorUdpServer>, D
         this.sessionManager = sessionManager;
     }
 
-    @Override
-    public ReactorUdpServer getObject() throws Exception {
-        return udpServer = new ReactorUdpServer(properties, handlerAdapter, sessionManager, decoderHandler);
+    public ReactorUdpServer getObject() {
+        return new ReactorUdpServer(properties, handlerAdapter, sessionManager, decoderHandler);
     }
 
-    @Override
-    public Class<?> getObjectType() {
-        return ReactorUdpServer.class;
-    }
-
-    @Override
-    public void destroy() throws Exception {
-        udpServer.stop();
-    }
 }

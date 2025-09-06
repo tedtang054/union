@@ -17,6 +17,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
+import javax.annotation.Resource;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,11 +44,17 @@ public class ServerAutoConfiguration {
     @Order(Ordered.HIGHEST_PRECEDENCE)
     @ConditionalOnProperty(name = "custom.transport.udp.enable", havingValue = "true")
     public static class ReactorUdpServerConfig {
+
+        @Resource
+        DefaultListableBeanFactory beanFactory;
+
         @Bean
         public ReactorUdpServerFactory reactorUdpServerFactory(TransportProperties properties, UdpHandlerAdapter adapter,
                                                                @Qualifier("udpDecoderHandler") CompositeDecodeHandler decoderHandler,
                                                                ClientSessionManager sessionManager) {
-            return new ReactorUdpServerFactory(properties, adapter, decoderHandler, sessionManager);
+            ReactorUdpServerFactory udpServerFactory = new ReactorUdpServerFactory(properties, adapter, decoderHandler, sessionManager);
+            beanFactory.registerSingleton("udpServer", udpServerFactory.getObject());
+            return udpServerFactory;
         }
 
         @Bean("udpDecoderHandler")
@@ -74,11 +82,17 @@ public class ServerAutoConfiguration {
     @Order(Ordered.HIGHEST_PRECEDENCE)
     @ConditionalOnProperty(name = "custom.transport.tcp.enable", havingValue = "true")
     public static class ReactorTcpServerConfig {
+
+        @Resource
+        DefaultListableBeanFactory beanFactory;
+
         @Bean
         public ReactorTcpServerFactory reactorTcpServerFactory(TransportProperties properties, TcpHandlerAdapter handlerAdapter,
                                                                ClientSessionManager sessionManager,
                                                                @Qualifier("tcpDecoderHandler") CompositeDecodeHandler decoderHandler) {
-            return new ReactorTcpServerFactory(properties, handlerAdapter, sessionManager, decoderHandler);
+            ReactorTcpServerFactory tcpServerFactory = new ReactorTcpServerFactory(properties, handlerAdapter, sessionManager, decoderHandler);
+            beanFactory.registerSingleton("tcpServer", tcpServerFactory.getObject());
+            return tcpServerFactory;
         }
 
         @Bean("tcpDecoderHandler")

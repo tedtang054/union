@@ -6,8 +6,7 @@ import com.github.tedtang054.union.transport.TransportProperties;
 import com.github.tedtang054.union.transport.channel.CompositeDecodeHandler;
 import io.netty.channel.ChannelOption;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.SmartLifecycle;
 import reactor.netty.DisposableServer;
 import reactor.netty.tcp.TcpServer;
 
@@ -19,7 +18,7 @@ import java.time.Duration;
  * @Date: 2024/04/17 14:25
  */
 @Slf4j
-public class ReactorTcpServer implements ApplicationRunner {
+public class ReactorTcpServer implements SmartLifecycle {
 
     private TransportProperties properties;
 
@@ -30,6 +29,8 @@ public class ReactorTcpServer implements ApplicationRunner {
     private CompositeDecodeHandler decoderHandler;
 
     private ClientSessionManager sessionManager;
+
+    private volatile boolean running = false;
 
     public ReactorTcpServer(TransportProperties properties, TcpHandlerAdapter tcpHandlerAdapter,
                             ClientSessionManager sessionManager, CompositeDecodeHandler decoderHandler) {
@@ -68,6 +69,7 @@ public class ReactorTcpServer implements ApplicationRunner {
         awaitThread.setDaemon(false);
         awaitThread.start();
         log.info("tcpServer running ........ port : {}", tcp.getPort());
+        running = true;
     }
 
     public void stop() {
@@ -79,7 +81,8 @@ public class ReactorTcpServer implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
-        start();
+    public boolean isRunning() {
+        return running;
     }
+
 }
